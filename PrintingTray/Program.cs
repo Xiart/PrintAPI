@@ -153,6 +153,7 @@ namespace PrintingTray
                 {
                     try
                     {
+
                         HttpListenerContext context = server.GetContext();
                         HttpListenerRequest request = context.Request;
                         HttpListenerResponse response = context.Response;
@@ -205,25 +206,40 @@ namespace PrintingTray
                                     }
                                 case "PrintHTML":
                                     {
-                                        string[] Params = new string[] { "", "", "" };
-                                        if (URL.Length > 5)
+                                        string[] Params = new string[] { "", "", "", "" };
+                                        if (request.HttpMethod == "GET")
                                         {
-                                            //1[0]. CaptureSequence, 2[1]. StandardFormat, 3[2]. SkipFingers
-                                            Params = URL[5].Replace("%5C", "\\").Replace("%2F", "/").Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
-                                            string reply = "";
-                                            if (Params.Length <= 2)
-                                            {
-                                                reply = Printing.PrintHTML(Params[0], Params[1]);
-                                            }
-                                            else
-                                            {
-                                                reply = Printing.PrintHTML(Params[0], Params[1], Params[2]);
-                                            }
-                                            byte[] buffer = System.Text.Encoding.UTF8.GetBytes(reply);
-                                            response.ContentLength64 = buffer.Length;
-                                            response.OutputStream.Write(buffer, 0, buffer.Length);  
-                                            context.Response.Close();
+                                            //Params = URL[5].Replace("%5C", "\\").Replace("%2F", "/").Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
+                                            Params[0] = context.Request.QueryString[0];
+                                            Params[1] = context.Request.QueryString[1];
+                                            Params[2] = context.Request.QueryString[2];
                                         }
+                                        else if (request.HttpMethod == "POST")
+                                        {                                            
+                                            using (var reader = new StreamReader(request.InputStream, request.ContentEncoding))
+                                            {
+                                                string t = reader.ReadToEnd();
+                                                t = System.Web.HttpUtility.UrlDecode(t);
+                                                Params = t.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
+                                                for(int i = 0; i < Params.Length; i++)
+                                                {
+                                                    Params[i] = Params[i].Substring(Params[i].IndexOf('=')+1);
+                                                }
+                                            }
+                                        }
+                                        string reply = "";
+                                        if (Params.Length <= 3)
+                                        {
+                                            reply = Printing.PrintHTML(Params[0], Params[1], Convert.ToInt32(Params[2]));
+                                        }
+                                        else
+                                        {
+                                            reply = Printing.PrintHTML(Params[0], Params[1], Convert.ToInt32(Params[2]), Params[3]);
+                                        }
+                                        byte[] buffer = System.Text.Encoding.UTF8.GetBytes(reply);
+                                        response.ContentLength64 = buffer.Length;
+                                        response.OutputStream.Write(buffer, 0, buffer.Length);
+                                        context.Response.Close();
                                         break;
                                     }
                             }

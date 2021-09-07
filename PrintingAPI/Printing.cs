@@ -16,7 +16,11 @@ namespace PrintingAPI
                 List<string> PName = new List<string>();
                 for (int i = 0; i < PrinterSettings.InstalledPrinters.Count; i++)
                 {
-                    if (PrinterSettings.InstalledPrinters[i] != "Microsoft XPS Document Writer" && PrinterSettings.InstalledPrinters[i] != "Microsoft Print to PDF" && PrinterSettings.InstalledPrinters[i] != "Fax" && PrinterSettings.InstalledPrinters[i] != "AnyDesk Printer" && PrinterSettings.InstalledPrinters[i] != "OneNote for Windows 10")
+                    if ((!PrinterSettings.InstalledPrinters[i].Contains("Microsoft XPS Document Writer")) && 
+                        (!PrinterSettings.InstalledPrinters[i].Contains("Microsoft Print to PDF")) && 
+                        (!PrinterSettings.InstalledPrinters[i].Contains("Fax")) && 
+                        (!PrinterSettings.InstalledPrinters[i].Contains("AnyDesk Printer")) && 
+                        (!PrinterSettings.InstalledPrinters[i].Contains("OneNote for Windows 10")))
                     {
                         PName.Add(PrinterSettings.InstalledPrinters[i]);
                     }
@@ -30,7 +34,7 @@ namespace PrintingAPI
             
         }
 
-        public static string PrintHTML(string PrinterName, string HTML, string BaseURI = "")
+        public static string PrintHTML(string PrinterName, string HTML, int Copies = 1 ,string BaseURI = "")
         {
             try
             {
@@ -42,7 +46,7 @@ namespace PrintingAPI
                 ConverterProperties CP = new ConverterProperties();
                 CP.SetBaseUri(BaseURI);
                 HtmlConverter.ConvertToPdf(fin, fout, CP);
-                return PrintDocument(PrinterName, "ToPrint.pdf");
+                return PrintDocument(PrinterName, "ToPrint.pdf", Copies);
             }
             catch(Exception ex)
             {
@@ -51,12 +55,13 @@ namespace PrintingAPI
            
         }
                
-        public static string PrintDocument(string printer, string FileName)
+        public static string PrintDocument(string printer, string FileName, int Copies = 1)
         {
             try
             {
                 PdfDocument pdf = new PdfDocument(FileName);
                 pdf.PrintSettings.PrinterName = printer;
+                pdf.PrintSettings.Copies = (short) Copies;
                 pdf.Print();
                 return "OK";
             }

@@ -13,8 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Printing">
-      <HintPath>F:\JSMU_MIS\.NET Core Custom Libraries\Printing\Printing\bin\Debug\netcoreapp3.1\Printing.dll</HintPath>
+    <Reference Include="PrintingAPI">
+      <HintPath>..\PrintingAPI\bin\Debug\netcoreapp3.1\PrintingAPI.dll</HintPath>
     </Reference>
   </ItemGroup>
 

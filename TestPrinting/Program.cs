@@ -1,5 +1,5 @@
 ﻿using System;
-using Printing;
+using PrintingAPI;
 using System.Collections.Generic;
 
 namespace TestPrinting
@@ -8,8 +8,8 @@ namespace TestPrinting
     {
         static void Main(string[] args)
         {
-            List<string> PList = Printing.Printing.GetPrinters();
-            Printing.Printing.PrintHTML(PList[0], "<html><head></head><body><h1>Hello World... Day 4 Ziyad...</h1></body></html>");
+            List<string> PList = Printing.GetPrinters();
+            Printing.PrintHTML(PList[2], "<html><head></head><body><h1>Hello World... Day 4 Ziyad...</h1></body></html>");
         }
     }
 }
